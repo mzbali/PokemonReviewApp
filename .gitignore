@@ -1,0 +1,47 @@
+# .NET Core / ASP.NET Core
+**/obj/
+**/bin/
+*.user
+*.suo
+*.userosscache
+*.dll
+*.exe
+*.pdb
+*.runtimeconfig.dev.json
+*.jfm
+*.bak
+*.tmp
+*.log
+*.vspscc
+*.vssscc
+*.pidb
+*.svclog
+*.scc
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Other
+*.swp
+*.swo
+*~
+
+# include in git for API
+!global.json
+!dotnet-tools.json
+
+# Ignore migation files
+# **/Migrations/*.cs
+
+# Ignore sqli files
+**/*.db-shm
+**/*.db-wal
+**/*.db
