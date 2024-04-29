@@ -13,16 +13,31 @@ var builder = WebApplication.CreateBuilder(args);
 }
 
 var app = builder.Build();
+
+if (args.Length > 0 && args[0] == "seed")
 {
-    if (app.Environment.IsDevelopment())
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        context.Database.Migrate();
+        await DbSeed.SeedAsync(context);
     }
-
-    app.UseHttpsRedirection();
-    app.UseAuthorization();
-    app.MapControllers();
-
-    app.Run();
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
 }
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
