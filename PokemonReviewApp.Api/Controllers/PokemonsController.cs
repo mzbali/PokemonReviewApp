@@ -6,7 +6,7 @@ using PokemonReviewApp.Api.Models;
 
 namespace PokemonReviewApp.Api.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class PokemonsController : ControllerBase
 {
