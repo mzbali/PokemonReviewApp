@@ -1,11 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Api.Data;
+using PokemonReviewApp.Api.Interfaces;
+using PokemonReviewApp.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+
+    //Add AutoMapper
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+    // Add repositories
+    builder.Services.AddScoped<IPokemonRepository, PokemonRepository>();
+
     builder.Services.AddDbContext<AppDbContext>(options =>
     {
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
