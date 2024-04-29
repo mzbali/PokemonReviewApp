@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
     // Add repositories
     builder.Services.AddScoped<IPokemonRepository, PokemonRepository>();
+    builder.Services.AddScoped<ICategoryRepository, CategoryRepositpry>();
+    builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 
     builder.Services.AddDbContext<AppDbContext>(options =>
     {
