@@ -30,4 +30,19 @@ public class CategoryRepositpry : ICategoryRepository
     {
         return _context.Categories.AnyAsync(c => c.Id == categoryId);
     }
+
+    public async Task<bool> CreateCategoryAsync(Category category)
+    {
+        await _context.Categories.AddAsync(category);
+        return await SaveAsync();
+    }
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public Task<bool> CategoryExistsAsync(string categoryName)
+    {
+        return _context.Categories.AnyAsync(c => c.Name == categoryName);
+    }
 }

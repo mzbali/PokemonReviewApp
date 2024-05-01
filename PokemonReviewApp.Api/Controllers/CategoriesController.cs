@@ -57,4 +57,32 @@ public class CategoriesController : ControllerBase
         var pokemonDto = _mapper.Map<ICollection<PokemonDto>>(pokemon);
         return Ok(pokemonDto);
     }
+
+    [HttpPost]
+    [ProducesResponseType(201, Type = typeof(Category))]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(422)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> CreateCategory(CategoryDto categoryDto)
+    {
+        if (await _categoryRepository.CategoryExistsAsync(categoryDto.Name))
+        {
+            ModelState.AddModelError("Name", "Category name already exists");
+            return StatusCode(422, ModelState);
+        }
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var category = _mapper.Map<Category>(categoryDto);
+        if (!await _categoryRepository.CreateCategoryAsync(category))
+        {
+            ModelState.AddModelError("", $"Failed to save the category: {categoryDto.Name}");
+            return StatusCode(500, ModelState);
+        }
+
+        var categoryDtoToReturn = _mapper.Map<CategoryDto>(category);
+        return CreatedAtAction(nameof(GetCategory), new { categoryId = category.Id }, categoryDtoToReturn);
+    }
 }
