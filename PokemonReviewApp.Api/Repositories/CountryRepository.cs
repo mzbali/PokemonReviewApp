@@ -38,4 +38,19 @@ public class CountryRepository : ICountryRepository
     {
         return await _context.Countries.AnyAsync(c => c.Id == countryId);
     }
+
+    public Task<bool> CountryExistsAsync(string countryName)
+    {
+        return _context.Countries.AnyAsync(c => c.Name == countryName);
+    }
+
+    public async Task<bool> CreateCountryAsync(Country country)
+    {
+        await _context.Countries.AddAsync(country);
+        return await SaveAsync();
+    }
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }
