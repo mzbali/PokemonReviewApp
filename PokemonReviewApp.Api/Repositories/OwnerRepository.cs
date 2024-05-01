@@ -36,5 +36,20 @@ public class OwnerRepository : IOwnerRepository
     {
         return _context.Owners.AnyAsync(o => o.Id == ownerId);
     }
+
+    public Task<bool> OwnerExistsAsync(string lastName)
+    {
+        return _context.Owners.AnyAsync(o => o.LastName == lastName);
+    }
+
+    public async Task<bool> AddOwnerAsync(Owner owner)
+    {
+        await _context.Owners.AddAsync(owner);
+        return await SaveAsync();
+    }
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }
 

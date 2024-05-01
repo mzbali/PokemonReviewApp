@@ -9,4 +9,7 @@ public interface IOwnerRepository
     public Task<ICollection<Pokemon>> GetPokemonByOwnerAsync(int ownerId);
     public Task<ICollection<Owner>> GetOwnerByPokemonAsync(int pokemonId);
     public Task<bool> OwnerExistsAsync(int ownerId);
+    public Task<bool> OwnerExistsAsync(string lastName);
+    public Task<bool> AddOwnerAsync(Owner owner);
+    public Task<bool> SaveAsync();
 }

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PokemonReviewApp.Api.Dto;
 using PokemonReviewApp.Api.Interfaces;
 using PokemonReviewApp.Api.Models;
@@ -11,11 +12,13 @@ namespace PokemonReviewApp.Api.Controllers;
 public class OwnerController : ControllerBase
 {
     private readonly IOwnerRepository _ownerRepository;
+    private readonly ICountryRepository _countryRepository;
     private readonly IMapper _mapper;
-    public OwnerController(IOwnerRepository ownerRepository, IMapper mapper)
+    public OwnerController(IOwnerRepository ownerRepository, IMapper mapper, ICountryRepository countryRepository)
     {
         _ownerRepository = ownerRepository;
         _mapper = mapper;
+        _countryRepository = countryRepository;
     }
 
     [HttpGet]
@@ -63,5 +66,36 @@ public class OwnerController : ControllerBase
             return NotFound();
         }
         return Ok(_mapper.Map<IEnumerable<OwnerDto>>(owners));
+    }
+
+    [HttpPost]
+    [ProducesResponseType(201, Type = typeof(Owner))]
+    [ProducesResponseType(422), ProducesResponseType(400), ProducesResponseType(500)]
+    public async Task<IActionResult> CreateOwner([FromQuery] int countryId, OwnerDto ownerDto)
+    {
+        if (await _ownerRepository.OwnerExistsAsync(ownerDto.LastName))
+        {
+            ModelState.AddModelError("LastName", "Owner already exists");
+            return StatusCode(422, ModelState);
+        }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var owner = _mapper.Map<Owner>(ownerDto);
+        var country = await _countryRepository.GetCountryAsync(countryId);
+        if (country == null)
+        {
+            ModelState.AddModelError("CountryId", "Country not found");
+            return StatusCode(400, ModelState);
+        }
+        owner.Country = country;
+
+        if (!await _ownerRepository.AddOwnerAsync(owner))
+        {
+            ModelState.AddModelError("", "Something went wrong saving the owner");
+            return StatusCode(500, ModelState);
+        }
+        var ownerToDto = _mapper.Map<OwnerDto>(owner);
+        return CreatedAtAction(nameof(GetOwner), new { ownerId = owner.Id }, ownerToDto);
     }
 }
