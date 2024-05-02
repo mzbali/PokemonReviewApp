@@ -92,4 +92,32 @@ public class ReviewsController : ControllerBase
         var reviewDtoToReturn = _mapper.Map<ReviewDto>(review);
         return CreatedAtAction(nameof(GetReview), new { reviewId = review.Id }, reviewDtoToReturn);
     }
+
+    [HttpPut("{reviewId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400), ProducesResponseType(404), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> UpdateReview(int reviewId, ReviewDto reviewDto)
+    {
+        if (reviewDto is null)
+        {
+            ModelState.AddModelError("", "Review object is null");
+            return BadRequest(ModelState);
+        }
+        if (reviewId != reviewDto.Id)
+        {
+            ModelState.AddModelError("", "Review Id mismatch");
+            return StatusCode(422, ModelState);
+        }
+        if (!await _reviewRepository.ReviewExistsAsync(reviewId))
+        {
+            return NotFound();
+        }
+        var review = _mapper.Map<Review>(reviewDto);
+        if (!await _reviewRepository.UpdateReviewAsync(review))
+        {
+            ModelState.AddModelError("", "Something went wrong while updating the review");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }

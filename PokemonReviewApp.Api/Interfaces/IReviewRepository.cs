@@ -10,5 +10,6 @@ public interface IReviewRepository
     public Task<bool> ReviewExistsAsync(int reviewId);
     public Task<bool> ReviewExistsAsync(string reviewTitle);
     public Task<bool> CreateReviewAsync(Review review);
+    public Task<bool> UpdateReviewAsync(Review review);
     public Task<bool> SaveAsync();
 }

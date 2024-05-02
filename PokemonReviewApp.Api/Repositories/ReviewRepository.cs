@@ -45,4 +45,9 @@ public class ReviewRepository : IReviewRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    public async Task<bool> UpdateReviewAsync(Review review)
+    {
+        _context.Reviews.Update(review);
+        return await SaveAsync();
+    }
 }
