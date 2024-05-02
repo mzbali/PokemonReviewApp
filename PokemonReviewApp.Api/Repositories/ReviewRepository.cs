@@ -30,4 +30,19 @@ public class ReviewRepository : IReviewRepository
     {
         return _context.Reviews.AnyAsync(r => r.Id == reviewId);
     }
+
+    public Task<bool> ReviewExistsAsync(string reviewTitle)
+    {
+        return _context.Reviews.AnyAsync(r => r.Title == reviewTitle);
+    }
+
+    public async Task<bool> CreateReviewAsync(Review review)
+    {
+        await _context.Reviews.AddAsync(review);
+        return await SaveAsync();
+    }
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }
