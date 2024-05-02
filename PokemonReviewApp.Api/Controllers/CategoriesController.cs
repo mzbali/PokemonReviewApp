@@ -83,4 +83,30 @@ public class CategoriesController : ControllerBase
         var categoryDtoToReturn = _mapper.Map<CategoryDto>(category);
         return CreatedAtAction(nameof(GetCategory), new { categoryId = category.Id }, categoryDtoToReturn);
     }
+    [HttpPut("{categoryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400), ProducesResponseType(404), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> UpdateCategory(int categoryId, CategoryDto categoryDto)
+    {
+        if (categoryId != categoryDto.Id)
+        {
+            ModelState.AddModelError("Id", "Category Id mismatch");
+            return StatusCode(400, ModelState);
+        }
+        if (!await _categoryRepository.CategoryExistsAsync(categoryId))
+            return NotFound();
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var category = _mapper.Map<Category>(categoryDto);
+
+        if (!await _categoryRepository.UpdateCategoryAsync(category))
+        {
+            ModelState.AddModelError("", $"Failed to update the category: {categoryDto.Name}");
+            return StatusCode(500, ModelState);
+        }
+
+        return NoContent();
+    }
 }

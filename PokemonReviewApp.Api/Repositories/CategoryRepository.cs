@@ -45,4 +45,9 @@ public class CategoryRepositpry : ICategoryRepository
     {
         return _context.Categories.AnyAsync(c => c.Name == categoryName);
     }
+    public async Task<bool> UpdateCategoryAsync(Category category)
+    {
+        _context.Categories.Update(category);
+        return await SaveAsync();
+    }
 }
