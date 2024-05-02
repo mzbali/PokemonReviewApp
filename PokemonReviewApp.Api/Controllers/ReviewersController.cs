@@ -52,4 +52,27 @@ public class ReviewersController : ControllerBase
         var reviews = await _reviewerRepository.GetReviewsByAReviewerAsync(reviewerId);
         return Ok(_mapper.Map<ICollection<ReviewDto>>(reviews));
     }
+    [HttpPost]
+    [ProducesResponseType(201, Type = typeof(Reviewer))]
+    [ProducesResponseType(400), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> CreateReviewer(ReviewerDto reviewerDto)
+    {
+        if (await _reviewerRepository.ReviewerExistsAsync(reviewerDto.LastName))
+        {
+            ModelState.AddModelError("LastName", "Reviewer already exists");
+            return StatusCode(422, ModelState);
+        }
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var reviewer = _mapper.Map<Reviewer>(reviewerDto);
+        if (!await _reviewerRepository.CreateReviewerAsync(reviewer))
+        {
+            ModelState.AddModelError("", $"Failed to create reviewer: {reviewerDto.LastName}");
+            return StatusCode(500, ModelState);
+        }
+        var reviewerDtoToReturn = _mapper.Map<ReviewerDto>(reviewer);
+        return CreatedAtAction(nameof(GetReviewer), new { reviewerId = reviewer.Id }, reviewerDtoToReturn);
+    }
 }

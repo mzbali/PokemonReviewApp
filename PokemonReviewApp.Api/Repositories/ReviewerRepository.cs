@@ -32,4 +32,20 @@ public class ReviewerRepository : IReviewerRepository
     {
         return _context.Reviewers.AnyAsync(r => r.Id == reviewerId);
     }
+
+    public Task<bool> ReviewerExistsAsync(string lastName)
+    {
+        return _context.Reviewers.AnyAsync(r => r.LastName == lastName);
+    }
+
+    public async Task<bool> CreateReviewerAsync(Reviewer reviewer)
+    {
+        await _context.Reviewers.AddAsync(reviewer);
+        return await SaveAsync();
+    }
+
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }
