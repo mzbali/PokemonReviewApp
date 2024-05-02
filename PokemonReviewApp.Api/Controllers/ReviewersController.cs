@@ -75,4 +75,29 @@ public class ReviewersController : ControllerBase
         var reviewerDtoToReturn = _mapper.Map<ReviewerDto>(reviewer);
         return CreatedAtAction(nameof(GetReviewer), new { reviewerId = reviewer.Id }, reviewerDtoToReturn);
     }
+    [HttpPut("{reviewerId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400), ProducesResponseType(404), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> UpdateReviewer(int reviewerId, ReviewerDto reviewerDto)
+    {
+        if (reviewerDto is null)
+        {
+            return BadRequest();
+        }
+        if (reviewerId != reviewerDto.Id)
+        {
+            return BadRequest();
+        }
+        if (!await _reviewerRepository.ReviewerExistsAsync(reviewerId))
+        {
+            return NotFound();
+        }
+        var reviewer = _mapper.Map<Reviewer>(reviewerDto);
+        if (!await _reviewerRepository.UpdateReviewerAsync(reviewer))
+        {
+            ModelState.AddModelError("", $"Failed to update reviewer: {reviewerDto.LastName}");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }

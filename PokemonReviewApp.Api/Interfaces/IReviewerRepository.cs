@@ -10,5 +10,6 @@ public interface IReviewerRepository
     public Task<bool> ReviewerExistsAsync(int reviewerId);
     public Task<bool> ReviewerExistsAsync(string lastName);
     public Task<bool> CreateReviewerAsync(Reviewer reviewer);
+    public Task<bool> UpdateReviewerAsync(Reviewer reviewer);
     public Task<bool> SaveAsync();
 }
