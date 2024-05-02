@@ -47,6 +47,11 @@ public class OwnerRepository : IOwnerRepository
         await _context.Owners.AddAsync(owner);
         return await SaveAsync();
     }
+    public async Task<bool> UpdateOwnerAsync(Owner owner)
+    {
+        _context.Owners.Update(owner);
+        return await SaveAsync();
+    }
     public async Task<bool> SaveAsync()
     {
         return await _context.SaveChangesAsync() > 0;

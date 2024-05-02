@@ -73,11 +73,6 @@ public class OwnerController : ControllerBase
     [ProducesResponseType(422), ProducesResponseType(400), ProducesResponseType(500)]
     public async Task<IActionResult> CreateOwner([FromQuery] int countryId, OwnerDto ownerDto)
     {
-        if (await _ownerRepository.OwnerExistsAsync(ownerDto.LastName))
-        {
-            ModelState.AddModelError("LastName", "Owner already exists");
-            return StatusCode(422, ModelState);
-        }
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -97,5 +92,34 @@ public class OwnerController : ControllerBase
         }
         var ownerToDto = _mapper.Map<OwnerDto>(owner);
         return CreatedAtAction(nameof(GetOwner), new { ownerId = owner.Id }, ownerToDto);
+    }
+    [HttpPut("{ownerId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400), ProducesResponseType(404), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> UpdateOwner(int ownerId, OwnerDto ownerDto)
+    {
+        if (ownerDto is null)
+        {
+            return BadRequest("Owner data must not be null");
+        }
+        if (ownerId != ownerDto.Id)
+        {
+            ModelState.AddModelError("Id", "Owner Id mismatch");
+            return UnprocessableEntity(ModelState); // 422 Unprocessable Entity
+        }
+        if (!await _ownerRepository.OwnerExistsAsync(ownerId))
+        {
+            return NotFound("Owner with the specified ID not found");
+        }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var owner = _mapper.Map<Owner>(ownerDto);
+        if (!await _ownerRepository.UpdateOwnerAsync(owner))
+        {
+            ModelState.AddModelError("", "Something went wrong while updating the owner");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
     }
 }

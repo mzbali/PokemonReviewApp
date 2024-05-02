@@ -11,5 +11,6 @@ public interface IOwnerRepository
     public Task<bool> OwnerExistsAsync(int ownerId);
     public Task<bool> OwnerExistsAsync(string lastName);
     public Task<bool> AddOwnerAsync(Owner owner);
+    public Task<bool> UpdateOwnerAsync(Owner owner);
     public Task<bool> SaveAsync();
 }
