@@ -43,4 +43,37 @@ public class PokemonRepository : IPokemonRepository
     {
         return _context.Pokemon.AnyAsync(p => p.Id == id);
     }
+
+    public Task<bool> PokemonExistsAsync(string name)
+    {
+        return _context.Pokemon.AnyAsync(p => p.Name == name);
+    }
+    public async Task<bool> CreatePokemonAsync(int ownerId, int categoryId, Pokemon pokemon)
+    {
+        var owner = await _context.Owners.FindAsync(ownerId);
+        var category = await _context.Categories.FindAsync(categoryId);
+        if (owner == null || category == null)
+        {
+            return false;
+        }
+        var pokemonCategory = new PokemonCategory
+        {
+            Pokemon = pokemon,
+            Category = category
+        };
+        var pokemonOwner = new PokemonOwner
+        {
+            Pokemon = pokemon,
+            Owner = owner
+        };
+        await _context.PokemonCategories.AddAsync(pokemonCategory);
+        await _context.PokemonOwners.AddAsync(pokemonOwner);
+        await _context.Pokemon.AddAsync(pokemon);
+        return await SaveAsync();
+    }
+
+    public async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }
