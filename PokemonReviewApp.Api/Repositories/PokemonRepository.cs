@@ -71,7 +71,11 @@ public class PokemonRepository : IPokemonRepository
         await _context.Pokemon.AddAsync(pokemon);
         return await SaveAsync();
     }
-
+    public async Task<bool> UpdatePokemonAsync(Pokemon pokemon)
+    {
+        _context.Pokemon.Update(pokemon);
+        return await SaveAsync();
+    }
     public async Task<bool> SaveAsync()
     {
         return await _context.SaveChangesAsync() > 0;

@@ -72,4 +72,31 @@ public class PokemonsController : ControllerBase
         var pokemonToDto = _mapper.Map<PokemonDto>(pokemon);
         return CreatedAtAction(nameof(GetPokemon), new { id = pokemon.Id }, pokemonToDto);
     }
+    [HttpPut("{pokemonId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400), ProducesResponseType(404), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> UpdatePokemon(int pokemonId, PokemonDto pokemonDto)
+    {
+        if (pokemonDto is null)
+        {
+            ModelState.AddModelError("", "Pokemon is empty");
+            return BadRequest(ModelState);
+        }
+        if (pokemonId != pokemonDto.Id)
+        {
+            ModelState.AddModelError("", "Pokemon Id mismatch");
+            return UnprocessableEntity(ModelState);
+        }
+        if (!await _pokemonRepository.PokemonExistsAsync(pokemonId))
+        {
+            return NotFound();
+        }
+        var pokemon = _mapper.Map<Pokemon>(pokemonDto);
+        if (!await _pokemonRepository.UpdatePokemonAsync(pokemon))
+        {
+            ModelState.AddModelError("", "Something went wrong while updating the Pokemon");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }

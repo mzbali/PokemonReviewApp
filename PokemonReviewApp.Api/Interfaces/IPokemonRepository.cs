@@ -11,5 +11,6 @@ public interface IPokemonRepository
     public Task<bool> PokemonExistsAsync(int id);
     public Task<bool> PokemonExistsAsync(string name);
     public Task<bool> CreatePokemonAsync(int pokemonId, int categoryId, Pokemon pokemon);
+    public Task<bool> UpdatePokemonAsync(Pokemon pokemon);
     public Task<bool> SaveAsync();
 }
