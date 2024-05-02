@@ -60,9 +60,7 @@ public class CategoriesController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(201, Type = typeof(Category))]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(422)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(400), ProducesResponseType(422), ProducesResponseType(500)]
     public async Task<IActionResult> CreateCategory(CategoryDto categoryDto)
     {
         if (await _categoryRepository.CategoryExistsAsync(categoryDto.Name))
