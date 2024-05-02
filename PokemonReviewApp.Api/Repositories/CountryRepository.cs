@@ -53,4 +53,9 @@ public class CountryRepository : ICountryRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    public async Task<bool> UpdateCountryAsync(Country country)
+    {
+        _context.Countries.Update(country);
+        return await SaveAsync();
+    }
 }

@@ -11,5 +11,6 @@ public interface ICountryRepository
     public Task<bool> CountryExistsAsync(int countryId);
     public Task<bool> CountryExistsAsync(string countryName);
     public Task<bool> CreateCountryAsync(Country country);
+    public Task<bool> UpdateCountryAsync(Country country);
     public Task<bool> SaveAsync();
 }

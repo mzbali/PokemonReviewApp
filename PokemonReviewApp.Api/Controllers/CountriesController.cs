@@ -77,4 +77,36 @@ public class CountriesController : ControllerBase
         var countryToDto = _mapper.Map<CountryDto>(country);
         return CreatedAtAction(nameof(GetCountry), new { countryId = country.Id }, countryToDto);
     }
+    [HttpPut("{countryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400), ProducesResponseType(404), ProducesResponseType(422), ProducesResponseType(500)]
+    public async Task<IActionResult> UpdateCountry(int countryId, CountryDto countryDto)
+    {
+        if (countryDto is null)
+        {
+            ModelState.AddModelError("", "Country object is null");
+            return BadRequest(ModelState);
+        }
+        if (countryId != countryDto.Id)
+        {
+            ModelState.AddModelError("Id", "Country Id mismatch");
+            return UnprocessableEntity(ModelState);
+        }
+        if (!await _countryRepository.CountryExistsAsync(countryId))
+        {
+            return NotFound("Country not found");
+        }
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var country = _mapper.Map<Country>(countryDto);
+        if (!await _countryRepository.UpdateCountryAsync(country))
+        {
+            ModelState.AddModelError("", "Failed to update the country");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }
