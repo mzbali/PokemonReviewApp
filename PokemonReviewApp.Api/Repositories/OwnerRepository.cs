@@ -56,5 +56,10 @@ public class OwnerRepository : IOwnerRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    public async Task<bool> DeleteOwnerAsync(Owner owner)
+    {
+        _context.Owners.Remove(owner);
+        return await SaveAsync();
+    }
 }
 

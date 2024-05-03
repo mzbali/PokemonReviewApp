@@ -122,4 +122,21 @@ public class OwnerController : ControllerBase
         }
         return NoContent();
     }
+    [HttpDelete("{ownerId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404), ProducesResponseType(500)]
+    public async Task<IActionResult> DeleteOwner(int ownerId)
+    {
+        var owner = await _ownerRepository.GetOwnerAsync(ownerId);
+        if (owner == null)
+        {
+            return NotFound();
+        }
+        if (!await _ownerRepository.DeleteOwnerAsync(owner))
+        {
+            ModelState.AddModelError("", "Something went wrong while deleting the owner");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }
