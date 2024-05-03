@@ -100,4 +100,21 @@ public class ReviewersController : ControllerBase
         }
         return NoContent();
     }
+    [HttpDelete("{reviewerId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404), ProducesResponseType(500)]
+    public async Task<IActionResult> DeleteReviewer(int reviewerId)
+    {
+        var reviewer = await _reviewerRepository.GetReviewerAsync(reviewerId);
+        if (reviewer == null)
+        {
+            return NotFound();
+        }
+        if (!await _reviewerRepository.DeleteReviewerAsync(reviewer))
+        {
+            ModelState.AddModelError("", $"Failed to delete reviewer: {reviewer.LastName}");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }

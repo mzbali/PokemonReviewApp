@@ -53,4 +53,9 @@ public class ReviewerRepository : IReviewerRepository
         _context.Reviewers.Update(reviewer);
         return await SaveAsync();
     }
+    public async Task<bool> DeleteReviewerAsync(Reviewer reviewer)
+    {
+        _context.Reviewers.Remove(reviewer);
+        return await SaveAsync();
+    }
 }
