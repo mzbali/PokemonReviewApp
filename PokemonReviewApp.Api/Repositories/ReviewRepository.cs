@@ -50,4 +50,9 @@ public class ReviewRepository : IReviewRepository
         _context.Reviews.Update(review);
         return await SaveAsync();
     }
+    public async Task<bool> DeleteReviewAsync(Review review)
+    {
+        _context.Reviews.Remove(review);
+        return await SaveAsync();
+    }
 }

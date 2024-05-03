@@ -120,4 +120,21 @@ public class ReviewsController : ControllerBase
         }
         return NoContent();
     }
+    [HttpDelete("{reviewId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404), ProducesResponseType(500)]
+    public async Task<IActionResult> DeleteReview(int reviewId)
+    {
+        var review = await _reviewRepository.GetReviewAsync(reviewId);
+        if (review is null)
+        {
+            return NotFound();
+        }
+        if (!await _reviewRepository.DeleteReviewAsync(review))
+        {
+            ModelState.AddModelError("", "Failed to delete the review");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }
