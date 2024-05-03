@@ -109,4 +109,21 @@ public class CountriesController : ControllerBase
         }
         return NoContent();
     }
+    [HttpDelete("{countryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404), ProducesResponseType(500)]
+    public async Task<IActionResult> DeleteCountry(int countryId)
+    {
+        var country = await _countryRepository.GetCountryAsync(countryId);
+        if (country == null)
+        {
+            return NotFound();
+        }
+        if (!await _countryRepository.DeleteCountryAsync(country))
+        {
+            ModelState.AddModelError("", "Failed to delete the country");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
 }

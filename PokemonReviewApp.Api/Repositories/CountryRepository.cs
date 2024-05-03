@@ -58,4 +58,9 @@ public class CountryRepository : ICountryRepository
         _context.Countries.Update(country);
         return await SaveAsync();
     }
+    public async Task<bool> DeleteCountryAsync(Country country)
+    {
+        _context.Countries.Remove(country);
+        return await SaveAsync();
+    }
 }
