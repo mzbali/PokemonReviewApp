@@ -11,5 +11,6 @@ public interface ICategoryRepository
     public Task<bool> CategoryExistsAsync(string categoryName);
     public Task<bool> CreateCategoryAsync(Category category);
     public Task<bool> UpdateCategoryAsync(Category category);
+    public Task<bool> DeleteCategoryAsync(Category category);
     public Task<bool> SaveAsync();
 }

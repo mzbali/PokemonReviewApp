@@ -50,4 +50,10 @@ public class CategoryRepositpry : ICategoryRepository
         _context.Categories.Update(category);
         return await SaveAsync();
     }
+
+    public async Task<bool> DeleteCategoryAsync(Category category)
+    {
+        _context.Categories.Remove(category);
+        return await SaveAsync();
+    }
 }

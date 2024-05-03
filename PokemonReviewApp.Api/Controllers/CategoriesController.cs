@@ -109,4 +109,22 @@ public class CategoriesController : ControllerBase
 
         return NoContent();
     }
+    [HttpDelete("{categoryId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404), ProducesResponseType(500)]
+    public async Task<IActionResult> DeleteCategory(int categoryId)
+    {
+        if (!await _categoryRepository.CategoryExistsAsync(categoryId))
+            return NotFound();
+
+        var category = await _categoryRepository.GetCategoryAsync(categoryId);
+
+        if (!await _categoryRepository.DeleteCategoryAsync(category))
+        {
+            ModelState.AddModelError("", $"Failed to delete the category: {category.Name}");
+            return StatusCode(500, ModelState);
+        }
+
+        return NoContent();
+    }
 }
