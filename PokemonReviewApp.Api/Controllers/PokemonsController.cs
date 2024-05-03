@@ -99,4 +99,23 @@ public class PokemonsController : ControllerBase
         }
         return NoContent();
     }
+
+    [HttpDelete("{pokemonId}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404), ProducesResponseType(500)]
+    public async Task<IActionResult> DeletePokemon(int pokemonId)
+    {
+        var pokemon = await _pokemonRepository.GetPokemonAsync(pokemonId);
+        if (pokemon == null)
+        {
+            return NotFound();
+        }
+        if (!await _pokemonRepository.DeletePokemonAsync(pokemon))
+        {
+            ModelState.AddModelError("", "Failed to delete the Pokemon");
+            return StatusCode(500, ModelState);
+        }
+        return NoContent();
+    }
+
 }

@@ -80,4 +80,9 @@ public class PokemonRepository : IPokemonRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    public async Task<bool> DeletePokemonAsync(Pokemon pokemon)
+    {
+        _context.Pokemon.Remove(pokemon);
+        return await SaveAsync();
+    }
 }
